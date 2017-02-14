@@ -1,0 +1,16 @@
+core:
+  working_directory: /tmp/
+statsd:
+  host: localhost
+  port: 8125
+patterns:
+  test:
+    match: '.*'
+    stats:
+      name: test
+      prefix: test
+  test2:
+    match: '^test.*'
+    stats:
+      name: test2
+      prefix: test2
