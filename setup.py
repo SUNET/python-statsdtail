@@ -5,6 +5,7 @@ setup(
     version='0.1.0',
     packages=find_packages(exclude=['sample-config']),
     include_package_data=True,
+    zip_safe=False,
     install_requires=[
         'python-daemon==2.1.2',
         'PyYAML==3.12',
