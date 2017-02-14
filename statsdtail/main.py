@@ -42,11 +42,13 @@ class Matcher(object):
             sys.exit(1)
 
     def match(self, line):
+        matched = False
         for pattern in self.patterns:
             if pattern['match'].search(line):
+                matched = True
                 statsd_client = self.statsd_clients[pattern['stats']['prefix']]
                 statsd_client.count(pattern['stats']['name'])
-                return True
+        return matched
 
 
 def load_config(config_file):
@@ -79,8 +81,6 @@ def main():
     # Use config to set up core functionality
     core_config = config.get('core', {})
     working_dir = core_config.get('working_directory', '/tmp')
-    # Set up matcher
-    matcher = Matcher(config, args.match)
     try:
         # Starts the daemon reading the log file, matches
         context = daemon.DaemonContext(working_directory=working_dir)
@@ -90,6 +90,9 @@ def main():
             context.stderr = sys.stderr
 
         with context:
+            # Set up matcher in context to not lose open sockets (in Statsd objects)
+            matcher = Matcher(config, args.match)
+
             if not args.detach:
                 print('Looking for matches: {}'.format(args.match))
                 print('Collecting stats for: {}:{}'.format(config['statsd']['host'], config['statsd']['port']))
@@ -99,7 +102,8 @@ def main():
                 if line is None:
                     time.sleep(1)
                     continue
-                if matcher.match(line) and args.verbose:
+                matched = matcher.match(line)
+                if matched and args.verbose:
                     print('Matched line: {}'.format(line))
     except KeyboardInterrupt:
         sys.exit(0)
