@@ -1,0 +1,4 @@
+python_module: statsdtail
+python_source_directory: statsdtail
+publish_over_ssh: pypi.sunet.se
+clean_workspace: true
