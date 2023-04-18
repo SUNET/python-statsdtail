@@ -4,7 +4,7 @@ version = '0.1.0'
 
 requires = [
     'python-daemon==2.1.2',
-    'PyYAML==3.12',
+    'PyYAML==5.4',
     'statsd==3.2.1',
     'tailhead==1.0.2',
 ]
